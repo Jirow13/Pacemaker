@@ -3,18 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+
 using TaleWorlds.CampaignSystem;
 
 namespace Pacemaker
 {
-	class Util
+	internal static class Util
 	{
 		internal static bool EnableLog
 		{
-			get
-			{
-				return Log is GameLog; // GameLog, derived from GameLogBase, provides thread-safe, async logging & in-game text display
-			}
+			get => Log is GameLog; // GameLog, derived from GameLogBase, provides thread-safe, async logging & in-game text display
 			set
 			{
 				if (Log is GameLog && !value)
@@ -37,13 +35,10 @@ namespace Pacemaker
 			private static readonly ConcurrentDictionary<string, bool> _stackTraceMap = new ConcurrentDictionary<string, bool>();
 
 			[MethodImpl(MethodImplOptions.NoInlining)]
-			internal static void Trace(string extraInfo, int framesToSkip = 1)
-			{
-				Trace(new List<string> { extraInfo }, framesToSkip + 1);
-			}
+			internal static void Trace(string extraInfo, int framesToSkip = 1) => Trace(new List<string> { extraInfo }, framesToSkip + 1);
 
 			[MethodImpl(MethodImplOptions.NoInlining)]
-			internal static void Trace(List<string> extraInfo = null, int framesToSkip = 1)
+			internal static void Trace(List<string>? extraInfo = null, int framesToSkip = 1)
 			{
 				if (!EnableTracer || !EnableLog)
 					return;
@@ -58,7 +53,7 @@ namespace Pacemaker
 					$"Real Timestamp:     {DateTime.Now:MM/dd H:mm:ss.fff}",
 				};
 
-				if (Campaign.Current != null)
+				if (Campaign.Current is not null)
 				{
 					msg.AddRange(new List<string>
 					{
@@ -85,23 +80,23 @@ namespace Pacemaker
 					{
 						msg.AddRange(new List<string>
 						{
-							String.Empty,
+							string.Empty,
 							"Stack Trace:",
 							stStr,
 						});
 					}
 				}
 
-				if (extraInfo != null && extraInfo.Count > 0)
+				if (extraInfo is not null && extraInfo.Count > 0)
 				{
 					msg.AddRange(new List<string>
 					{
-						String.Empty,
+						string.Empty,
 						"Extra Information:",
 					});
 
 					if (extraInfo.Count > 1)
-						msg.Add(String.Empty);
+						msg.Add(string.Empty);
 
 					msg.AddRange(extraInfo);
 				}

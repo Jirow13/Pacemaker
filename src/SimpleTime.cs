@@ -1,10 +1,11 @@
 ﻿using System;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.SaveSystem;
 
 namespace Pacemaker
 {
-	public class SimpleTime
+	internal sealed class SimpleTime
 	{
 		[SaveableProperty(1)]
 		public int Year { get; set; } = 0;
@@ -33,16 +34,6 @@ namespace Pacemaker
 
 			FractionalDay = Math.Min(0.999999, Math.Max(+0.0, fracDays)); // clamp to [+0, 0.999999]
 		}
-
-		public CampaignTime ToCampaignTime() => CampaignTimeExt.YearsD(Year) +
-			CampaignTimeExt.SeasonsD(Season) +
-			CampaignTimeExt.DaysD(Day + FractionalDay);
-
-		public bool IsValid => Year >= 0 &&
-			IsSeasonValid &&
-			Day >= 0 &&
-			FractionalDay >= 0f &&
-			FractionalDay < 1f;
 
 		private bool IsSeasonValid => Season >= 0 && Season < TimeParams.SeasonPerYear;
 
