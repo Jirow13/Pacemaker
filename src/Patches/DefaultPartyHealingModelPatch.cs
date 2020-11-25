@@ -1,5 +1,7 @@
 ﻿using System;
+
 using HarmonyLib;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.SandBox.GameComponents.Map;
 using TaleWorlds.Localization;
@@ -7,10 +9,10 @@ using TaleWorlds.Localization;
 namespace Pacemaker.Patches
 {
 	[HarmonyPatch(typeof(DefaultPartyHealingModel))]
-	class DefaultPartyHealingModelPatch
+	internal static class DefaultPartyHealingModelPatch
 	{
-		private static readonly TextObject TimeMultAdjustmentExplanation = new TextObject($"[{Main.DisplayName}] Time Multiplier");
-		private static readonly TextObject ConfigAdjustmentExplanation = new TextObject($"[{Main.DisplayName}] Adjustment Factor");
+		private static readonly TextObject TimeMultAdjustmentExplanation = new($"[{Main.DisplayName}] Time Multiplier");
+		private static readonly TextObject ConfigAdjustmentExplanation = new($"[{Main.DisplayName}] Adjustment Factor");
 
 		private static class Helpers
 		{
@@ -19,7 +21,7 @@ namespace Pacemaker.Patches
 			 */
 			internal static void GetDailyHealing(StatExplainer explanation, ref float __result)
 			{
-				if (!Main.Settings.EnableHealingTweaks || __result <= 0f)
+				if (!Main.Settings!.EnableHealingTweaks || __result <= 0f)
 					return;
 
 				// Our factors to apply to [hopefully] final values
@@ -53,13 +55,13 @@ namespace Pacemaker.Patches
 		[HarmonyPostfix]
 		[HarmonyPriority(Priority.Last)]
 		[HarmonyPatch("GetDailyHealingForRegulars")]
-		static void GetDailyHealingForRegulars(MobileParty party, StatExplainer explanation, ref float __result) =>
+		private static void GetDailyHealingForRegulars(MobileParty party, StatExplainer explanation, ref float __result) =>
 			Helpers.GetDailyHealing(explanation, ref __result);
 
 		[HarmonyPostfix]
 		[HarmonyPriority(Priority.Last)]
 		[HarmonyPatch("GetDailyHealingHpForHeroes")]
-		static void GetDailyHealingHpForHeroes(MobileParty party, StatExplainer explanation, ref float __result) =>
+		private static void GetDailyHealingHpForHeroes(MobileParty party, StatExplainer explanation, ref float __result) =>
 			Helpers.GetDailyHealing(explanation, ref __result);
 	}
 }
